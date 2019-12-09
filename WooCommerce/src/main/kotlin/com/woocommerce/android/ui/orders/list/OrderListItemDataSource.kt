@@ -17,7 +17,6 @@ import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.generated.WCOrderActionBuilder
 import org.wordpress.android.fluxc.model.LocalOrRemoteId.RemoteId
 import org.wordpress.android.fluxc.model.WCOrderListDescriptor
-import org.wordpress.android.fluxc.model.WCOrderModel
 import org.wordpress.android.fluxc.model.WCOrderSummaryModel
 import org.wordpress.android.fluxc.model.list.datasource.ListItemDataSourceInterface
 import org.wordpress.android.fluxc.store.WCOrderStore
@@ -44,16 +43,14 @@ class OrderListItemDataSource(
         itemIdentifiers: List<OrderListItemIdentifier>
     ): List<OrderListItemUIType> {
         val remoteItemIds = itemIdentifiers.mapNotNull { (it as? OrderIdentifier)?.remoteId }
-        val ordersMap: Map<RemoteId, WCOrderModel> = if (!networkStatus.isConnected()) {
-            orderStore.getOrdersForListDescriptor(listDescriptor).associateBy { RemoteId(it.remoteOrderId) }
-        } else {
-            orderStore.getOrdersByRemoteOrderId(listDescriptor.site, remoteItemIds).also { ordersMap ->
-                // Fetch missing items
-                fetcher.fetchOrders(
-                        site = listDescriptor.site,
-                        remoteItemIds = remoteItemIds.filter { !ordersMap.containsKey(it) }
-                )
-            }
+        val ordersMap = orderStore.getOrdersByRemoteOrderId(listDescriptor.site, remoteItemIds)
+
+        if (networkStatus.isConnected()) {
+            // Fetch missing items
+            fetcher.fetchOrders(
+                    site = listDescriptor.site,
+                    remoteItemIds = remoteItemIds.filter { !ordersMap.containsKey(it) }
+            )
         }
 
         val mapSummary = { remoteOrderId: RemoteId ->
