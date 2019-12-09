@@ -17,10 +17,12 @@ import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.generated.WCOrderActionBuilder
 import org.wordpress.android.fluxc.model.LocalOrRemoteId.RemoteId
 import org.wordpress.android.fluxc.model.WCOrderListDescriptor
+import org.wordpress.android.fluxc.model.WCOrderModel
 import org.wordpress.android.fluxc.model.WCOrderSummaryModel
 import org.wordpress.android.fluxc.model.list.datasource.ListItemDataSourceInterface
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.FetchOrderListPayload
+import org.wordpress.android.fluxc.model.list.datasource.InternalPagedListDataSource
 import org.wordpress.android.util.DateTimeUtils
 import java.util.Date
 
@@ -28,8 +30,8 @@ import java.util.Date
  * Works with a [androidx.paging.PagedList] by providing the logic needed to fetch the data used to populate
  * the order list view.
  *
- * @see [ListItemDataSourceInterface] and [org.wordpress.android.fluxc.model.list.datasource.InternalPagedListDataSource]
- * in FluxC to get a better understanding of how this works with the underlying internal list management code.
+ * @see [ListItemDataSourceInterface] and [InternalPagedListDataSource] in FluxC to get a better understanding
+ * of how this works with the underlying internal list management code.
  */
 class OrderListItemDataSource(
     private val dispatcher: Dispatcher,
@@ -42,13 +44,17 @@ class OrderListItemDataSource(
         itemIdentifiers: List<OrderListItemIdentifier>
     ): List<OrderListItemUIType> {
         val remoteItemIds = itemIdentifiers.mapNotNull { (it as? OrderIdentifier)?.remoteId }
-        val ordersMap = orderStore.getOrdersForDescriptor(listDescriptor, remoteItemIds)
-
-        // Fetch missing items
-        fetcher.fetchOrders(
-                site = listDescriptor.site,
-                remoteItemIds = remoteItemIds.filter { !ordersMap.containsKey(it) }
-        )
+        val ordersMap: Map<RemoteId, WCOrderModel> = if (!networkStatus.isConnected()) {
+            orderStore.getOrdersForDescriptor(listDescriptor).associateBy { RemoteId(it.remoteOrderId) }
+        } else {
+            orderStore.getOrdersByRemoteOrderId(listDescriptor.site, remoteItemIds).also { ordersMap ->
+                // Fetch missing items
+                fetcher.fetchOrders(
+                        site = listDescriptor.site,
+                        remoteItemIds = remoteItemIds.filter { !ordersMap.containsKey(it) }
+                )
+            }
+        }
 
         val mapSummary = { remoteOrderId: RemoteId ->
             ordersMap[remoteOrderId].let { order ->
@@ -81,18 +87,21 @@ class OrderListItemDataSource(
         remoteItemIds: List<RemoteId>,
         isListFullyFetched: Boolean
     ): List<OrderListItemIdentifier> {
-        val orderSummaries = orderStore.getOrderSummariesByRemoteOrderIds(listDescriptor.site, remoteItemIds)
-                .let { summariesByRemoteId ->
-                    val summaries = remoteItemIds.mapNotNull { summariesByRemoteId[it] }
-
-                    if (!networkStatus.isConnected()) {
-                        // The network is not connected so remove any order summaries from the list where
-                        // a matching order has not yet been downloaded. This prevents the user from seeing
-                        // a "loading" view for that item indefinitely.
-                        val cachedOrders = orderStore.getOrdersForDescriptor(listDescriptor, remoteItemIds)
-                        summaries.filter { cachedOrders.containsKey(RemoteId(it.remoteOrderId)) }
-                    } else summaries
+        val orderSummaries = if (!networkStatus.isConnected()) {
+            orderStore.getOrdersForDescriptor(listDescriptor).map { orderModel ->
+                WCOrderSummaryModel().apply {
+                    localSiteId = orderModel.localSiteId
+                    remoteOrderId = orderModel.remoteOrderId
+                    dateCreated = orderModel.dateCreated
                 }
+            }
+        } else {
+            orderStore
+                    .getOrderSummariesByRemoteOrderIds(listDescriptor.site, remoteItemIds)
+                    .let { summariesByRemoteId ->
+                        remoteItemIds.mapNotNull { summariesByRemoteId[it] }
+                    }
+        }
 
         val listFuture = mutableListOf<OrderIdentifier>()
         val listToday = mutableListOf<OrderIdentifier>()
