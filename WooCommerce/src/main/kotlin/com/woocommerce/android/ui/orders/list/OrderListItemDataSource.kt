@@ -45,7 +45,7 @@ class OrderListItemDataSource(
     ): List<OrderListItemUIType> {
         val remoteItemIds = itemIdentifiers.mapNotNull { (it as? OrderIdentifier)?.remoteId }
         val ordersMap: Map<RemoteId, WCOrderModel> = if (!networkStatus.isConnected()) {
-            orderStore.getOrdersForDescriptor(listDescriptor).associateBy { RemoteId(it.remoteOrderId) }
+            orderStore.getOrdersForListDescriptor(listDescriptor).associateBy { RemoteId(it.remoteOrderId) }
         } else {
             orderStore.getOrdersByRemoteOrderId(listDescriptor.site, remoteItemIds).also { ordersMap ->
                 // Fetch missing items
@@ -88,7 +88,7 @@ class OrderListItemDataSource(
         isListFullyFetched: Boolean
     ): List<OrderListItemIdentifier> {
         val orderSummaries = if (!networkStatus.isConnected()) {
-            orderStore.getOrdersForDescriptor(listDescriptor).map { orderModel ->
+            orderStore.getOrdersForListDescriptor(listDescriptor).map { orderModel ->
                 WCOrderSummaryModel().apply {
                     localSiteId = orderModel.localSiteId
                     remoteOrderId = orderModel.remoteOrderId
