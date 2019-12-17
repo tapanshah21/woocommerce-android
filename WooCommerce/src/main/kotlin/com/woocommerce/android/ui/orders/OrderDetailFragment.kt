@@ -31,6 +31,7 @@ import com.woocommerce.android.ui.main.MainActivity.NavigationResult
 import com.woocommerce.android.ui.main.MainNavigationRouter
 import com.woocommerce.android.ui.orders.notes.OrderDetailOrderNoteListView.OrderDetailNoteListener
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.WooAnimUtils
 import com.woocommerce.android.widgets.SkeletonView
 import dagger.android.support.AndroidSupportInjection
@@ -457,11 +458,15 @@ class OrderDetailFragment : BaseFragment(), OrderDetailContract.View, OrderDetai
     }
 
     override fun showOrderRefunds(refunds: List<Refund>) {
-        orderDetail_paymentInfo.showRefunds(refunds)
+        if (FeatureFlag.REFUNDS.isEnabled()) {
+            orderDetail_paymentInfo.showRefunds(refunds)
+        }
     }
 
     override fun showOrderRefundTotal(refundTotal: BigDecimal) {
-        orderDetail_paymentInfo.showRefundTotal(refundTotal)
+        if (FeatureFlag.REFUNDS.isEnabled()) {
+            orderDetail_paymentInfo.showRefundTotal(refundTotal)
+        }
     }
 
     override fun showAddOrderNoteScreen(order: WCOrderModel) {

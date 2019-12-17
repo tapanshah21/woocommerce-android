@@ -13,6 +13,7 @@ import com.woocommerce.android.extensions.isEqualTo
 import com.woocommerce.android.extensions.show
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.Refund
+import com.woocommerce.android.util.FeatureFlag
 import kotlinx.android.synthetic.main.order_detail_payment_info.view.*
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.order.CoreOrderStatus
 import java.math.BigDecimal
@@ -79,7 +80,7 @@ class OrderDetailPaymentView @JvmOverloads constructor(ctx: Context, attrs: Attr
         }
 
         // Populate or hide refund section
-        if (order.refundTotal > BigDecimal.ZERO) {
+        if (order.refundTotal > BigDecimal.ZERO && FeatureFlag.REFUNDS.isEnabled()) {
             paymentInfo_refundSection.show()
             val newTotal = order.total - order.refundTotal
             paymentInfo_newTotal.text = formatCurrencyForDisplay(newTotal)
@@ -125,7 +126,7 @@ class OrderDetailPaymentView @JvmOverloads constructor(ctx: Context, attrs: Attr
             availableRefundQuantity -= refundedCount
         }
 
-        if (availableRefundQuantity > 0) {
+        if (availableRefundQuantity > 0 && FeatureFlag.REFUNDS.isEnabled()) {
             paymentInfo_issueRefundButtonSection.show()
         } else {
             paymentInfo_issueRefundButtonSection.hide()
@@ -133,9 +134,11 @@ class OrderDetailPaymentView @JvmOverloads constructor(ctx: Context, attrs: Attr
     }
 
     fun showRefundTotal(refundTotal: BigDecimal) {
-        paymentInfo_refundTotal.text = formatCurrency(refundTotal)
+        if (FeatureFlag.REFUNDS.isEnabled()) {
+            paymentInfo_refundTotal.text = formatCurrency(refundTotal)
 
-        paymentInfo_refunds.hide()
-        paymentInfo_refundTotalSection.show()
+            paymentInfo_refunds.hide()
+            paymentInfo_refundTotalSection.show()
+        }
     }
 }
