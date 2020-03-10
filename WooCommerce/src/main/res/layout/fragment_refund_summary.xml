@@ -49,7 +49,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/list_divider"
+                android:background="@color/divider_color"
                 android:layout_marginTop="@dimen/card_item_padding_intra_double"
                 app:srcCompat="@drawable/list_divider"/>
 
@@ -82,7 +82,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/list_divider"
+                android:background="@color/divider_color"
                 android:layout_marginTop="@dimen/card_item_padding_intra_double"
                 app:srcCompat="@drawable/list_divider"/>
 
