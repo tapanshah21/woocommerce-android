@@ -16,6 +16,22 @@ object PreferenceUtils {
         }
     }
 
+    fun setLong(preferences: SharedPreferences, key: String, value: Long) {
+        setString(preferences, key, value.toString())
+    }
+
+    fun getLong(preferences: SharedPreferences, key: String, default: Long = 0): Long {
+        return try {
+            getString(preferences, key)?.let { value ->
+                if (value.isEmpty()) {
+                    default
+                } else value.toLong()
+            } ?: default
+        } catch (e: NumberFormatException) {
+            default
+        }
+    }
+
     fun setInt(preferences: SharedPreferences, key: String, value: Int) {
         setString(preferences, key, Integer.toString(value))
     }

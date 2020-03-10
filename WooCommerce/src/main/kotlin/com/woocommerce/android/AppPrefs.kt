@@ -38,7 +38,9 @@ object AppPrefs {
         IS_PRODUCTS_FEATURE_ENABLED,
         LOGIN_USER_BYPASSED_JETPACK_REQUIRED,
         SELECTED_ORDER_LIST_TAB_POSITION,
-        IMAGE_OPTIMIZE_ENABLED
+        IMAGE_OPTIMIZE_ENABLED,
+        STATS_WIDGET_SELECTED_SITE_ID,
+        STATS_WIDGET_HAS_DATA
     }
 
     /**
@@ -263,6 +265,38 @@ object AppPrefs {
         setBoolean(IMAGE_OPTIMIZE_ENABLED, enabled)
     }
 
+    fun setStatsWidgetSelectedSiteId(siteId: Long, appWidgetId: Int) {
+        setLong(getSiteIdWidgetKey(appWidgetId), siteId)
+    }
+
+    fun getStatsWidgetSelectedSiteId(appWidgetId: Int): Long {
+        return getLong(getSiteIdWidgetKey(appWidgetId), -1)
+    }
+
+    fun removeStatsWidgetSelectedSiteId(appWidgetId: Int) {
+        remove(getSiteIdWidgetKey(appWidgetId))
+    }
+
+    fun setStatsWidgetHasData(hasData: Boolean, appWidgetId: Int) {
+        setBoolean(getHasDataWidgetKey(appWidgetId), hasData)
+    }
+
+    fun getStatsWidgetHasData(appWidgetId: Int): Boolean {
+        return getBoolean(getHasDataWidgetKey(appWidgetId), false)
+    }
+
+    fun removeStatsWidgetHasData(appWidgetId: Int) {
+        remove(getHasDataWidgetKey(appWidgetId))
+    }
+
+    private fun getSiteIdWidgetKey(appWidgetId: Int): String {
+        return DeletablePrefKey.STATS_WIDGET_SELECTED_SITE_ID.name + appWidgetId
+    }
+
+    private fun getHasDataWidgetKey(appWidgetId: Int): String {
+        return DeletablePrefKey.STATS_WIDGET_HAS_DATA.name + appWidgetId
+    }
+
     /**
      * Remove all user-related preferences.
      */
@@ -279,6 +313,12 @@ object AppPrefs {
     private fun setInt(key: PrefKey, value: Int) =
             PreferenceUtils.setInt(getPreferences(), key.toString(), value)
 
+    private fun getLong(key: String, default: Long = 0) =
+            PreferenceUtils.getLong(getPreferences(), key, default)
+
+    private fun setLong(key: String, value: Long) =
+            PreferenceUtils.setLong(getPreferences(), key, value)
+
     private fun getString(key: PrefKey, defaultValue: String = ""): String {
         return PreferenceUtils.getString(getPreferences(), key.toString(), defaultValue)?.let {
             it
@@ -288,16 +328,22 @@ object AppPrefs {
     private fun setString(key: PrefKey, value: String) =
             PreferenceUtils.setString(getPreferences(), key.toString(), value)
 
-    fun getBoolean(key: PrefKey, default: Boolean) =
-            PreferenceUtils.getBoolean(getPreferences(), key.toString(), default)
+    fun getBoolean(key: PrefKey, default: Boolean) = getBoolean(key.toString(), default)
 
-    fun setBoolean(key: PrefKey, value: Boolean = false) =
-            PreferenceUtils.setBoolean(getPreferences(), key.toString(), value)
+    fun setBoolean(key: PrefKey, value: Boolean = false) = setBoolean(key.toString(), value)
+
+    fun getBoolean(key: String, default: Boolean) =
+            PreferenceUtils.getBoolean(getPreferences(), key, default)
+
+    fun setBoolean(key: String, value: Boolean = false) =
+            PreferenceUtils.setBoolean(getPreferences(), key, value)
 
     private fun getPreferences() = PreferenceManager.getDefaultSharedPreferences(context)
 
-    private fun remove(key: PrefKey) {
-        getPreferences().edit().remove(key.toString()).apply()
+    private fun remove(key: PrefKey) = remove(key.toString())
+
+    private fun remove(key: String) {
+        getPreferences().edit().remove(key).apply()
     }
 
     fun exists(key: PrefKey) = getPreferences().contains(key.toString())

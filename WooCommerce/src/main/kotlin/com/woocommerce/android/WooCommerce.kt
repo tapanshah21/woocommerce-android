@@ -79,6 +79,7 @@ open class WooCommerce : MultiDexApplication(), HasAndroidInjector, ApplicationL
 
     companion object {
         private const val SECONDS_BETWEEN_SITE_UPDATE = 60 * 60 // 1 hour
+        const val LOCAL_SITE_ID = "LOCAL_SITE_ID"
     }
 
     /**

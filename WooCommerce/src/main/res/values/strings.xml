@@ -187,6 +187,12 @@
     <string name="my_store_stats_reverted_message">We have reverted to the old stats. To use the beta stats, please activate the WooCommerce Admin plugin with version 0.22 or higher</string>
     <string name="my_store_stats_availability_title">Try our improved stats</string>
     <string name="my_store_stats_availability_message">We\'re rolling out improvements to stats for  stores using the WooCommerce Admin plugin</string>
+
+    <string name="stats_widget_error_no_data">Couldn\'t load data</string>
+    <string name="stats_widget_error_no_network">No network available</string>
+    <string name="stats_widget_error_no_access_token">To view your stats, log in to the WordPress.com account.</string>
+    <string name="my_site_icon_content_description">Change site icon</string>
+    <string name="loading">Loading…</string>
     <!--
         Order List View
     -->
