@@ -43,15 +43,16 @@ class ProductDetailViewModelTest : BaseUnitTest() {
 
     private val coroutineDispatchers = CoroutineDispatchers(
             Dispatchers.Unconfined, Dispatchers.Unconfined, Dispatchers.Unconfined)
-    private val product = ProductTestUtils.generateProduct()
+    private val product = ProductTestUtils.generateProduct(1)
     private val productRemoteId = product.remoteId
+    private val offlineProduct = ProductTestUtils.generateProduct(2)
     private lateinit var viewModel: ProductDetailViewModel
 
     private val productWithParameters = ProductDetailViewState(
             productDraft = product,
             storedProduct = product,
             isSkeletonShown = false,
-            uploadingImageUris = emptyList(),
+            uploadingImageUris = null,
             weightWithUnits = "10kg",
             sizeWithUnits = "1 x 2 x 3 cm",
             priceWithCurrency = "CZK20.00",
@@ -123,7 +124,7 @@ class ProductDetailViewModelTest : BaseUnitTest() {
 
     @Test
     fun `Do not fetch product from api when not connected`() = test {
-        doReturn(product).whenever(productRepository).getProduct(any())
+        doReturn(offlineProduct).whenever(productRepository).getProduct(any())
         doReturn(false).whenever(networkStatus).isConnected()
 
         var snackbar: ShowSnackbar? = null
@@ -266,7 +267,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
 
         verify(productRepository, times(1)).updateProduct(any())
         verify(productRepository, times(2)).getProduct(productRemoteId)
-        verify(productRepository, times(1)).fetchProduct(any())
 
         assertThat(snackbar).isEqualTo(ShowSnackbar(R.string.product_detail_update_product_success))
         assertThat(productData?.isProgressDialogShown).isFalse()
