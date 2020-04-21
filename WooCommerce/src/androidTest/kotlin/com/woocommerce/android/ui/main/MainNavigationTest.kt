@@ -46,20 +46,22 @@ class MainNavigationTest : TestBase() {
     }
 
     @Test
-    fun pressingBackAfterBottomNavOptionChangeExitsApp() {
+    fun pressingBackAfterBottomNavOptionChangeShowsDashboard() {
         // Make sure the bottom navigation view is showing
         activityTestRule.activity.showBottomNav()
 
         // add mock data to order list screen
         activityTestRule.setOrderListWithMockData()
 
-        // Verify switching bottom bar tabs does not retain a back stack.
         // Switch from the default dashboard tab to the orders tab
         onView(withId(R.id.orders)).perform(click())
 
-        // Clicking back should not switch back to the previous tab, it should
-        // exit the app.
-        assertPressingBackExitsApp()
+        // Press "back" button
+        Espresso.pressBack()
+
+        // Clicking back should switch the tab to the dashboard tab
+        onView(withId(R.id.toolbar)).check(matches(
+                WCMatchers.withToolbarTitle(equalToIgnoringCase(appContext.getString(R.string.my_store)))))
     }
 
     @Test
