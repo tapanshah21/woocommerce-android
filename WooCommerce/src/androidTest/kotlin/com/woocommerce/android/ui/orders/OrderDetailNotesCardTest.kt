@@ -3,7 +3,6 @@ package com.woocommerce.android.ui.orders
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -15,7 +14,6 @@ import com.woocommerce.android.R.id
 import com.woocommerce.android.helpers.WCMatchers
 import com.woocommerce.android.ui.TestBase
 import com.woocommerce.android.ui.main.MainActivityTestRule
-import com.woocommerce.android.util.DateUtils
 import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Rule
@@ -71,24 +69,30 @@ class OrderDetailNotesCardTest : TestBase() {
         onView(withId(R.id.ordersList))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        // verify that first note date displayed matches this format: April 5, 2019 at 10:42 PM
-        onView(withId(R.id.orderDetail_noteList)).perform(scrollTo())
-        onView(WCMatchers.withRecyclerView(R.id.notesList_notes).atPositionOnView(0, R.id.orderNote_header))
-                .check(matches(withText(DateUtils
-                        .getFriendlyLongDateAtTimeString(appContext, mockOrderNotesList[0].dateCreated).capitalize()
-                )))
+        // scroll to the order notes section
+        onView(withId(R.id.orderDetail_noteList)).perform(WCMatchers.scrollTo())
+
+        // verify first date header
+        onView(WCMatchers.withRecyclerView(R.id.notesList_notes).atPositionOnView(0, R.id.orderDetail_noteListHeader))
+                .check(matches(withText("Apr 5, 2019")))
+
+        // verify first note item
+        onView(WCMatchers.withRecyclerView(R.id.notesList_notes).atPositionOnView(1, R.id.orderNote_header))
+                .check(matches(withText("10:12 AM - Author (To customer)")))
+
+        onView(WCMatchers.withRecyclerView(R.id.notesList_notes).atPositionOnView(2, R.id.orderDetail_noteListHeader))
+                .check(matches(withText("Nov 5, 2018")))
 
         // verify that second note displayed matches this format: November 5, 2018 at 7:45 PM
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(1, R.id.orderNote_header))
-                .check(matches(withText(DateUtils
-                        .getFriendlyLongDateAtTimeString(appContext, mockOrderNotesList[1].dateCreated).capitalize()
-                )))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(3, R.id.orderNote_header))
+                .check(matches(withText("7:15 AM (System)")))
+
+        onView(WCMatchers.withRecyclerView(R.id.notesList_notes).atPositionOnView(4, R.id.orderDetail_noteListHeader))
+                .check(matches(withText("Dec 4, 2016")))
 
         // verify that third note displayed matches this format: December 4, 2016 at 5:45 PM
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(2, R.id.orderNote_header))
-                .check(matches(withText(DateUtils
-                        .getFriendlyLongDateAtTimeString(appContext, mockOrderNotesList[2].dateCreated).capitalize()
-                )))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(5, R.id.orderNote_header))
+                .check(matches(withText("5:15 AM - Author (Private)")))
     }
 
     @Test
@@ -103,16 +107,19 @@ class OrderDetailNotesCardTest : TestBase() {
         onView(withId(R.id.ordersList))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
+        // scroll to the order notes section
+        onView(withId(R.id.orderDetail_noteList)).perform(WCMatchers.scrollTo())
+
         // verify that date displayed matches this format: "This should be displayed first"
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(0, R.id.orderNote_note))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(1, R.id.orderNote_note))
                 .check(matches(withText(mockOrderNotesList[0].note)))
 
         // verify that date displayed matches this format: "This should be displayed second"
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(1, R.id.orderNote_note))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(3, R.id.orderNote_note))
                 .check(matches(withText(mockOrderNotesList[1].note)))
 
         // verify that date displayed matches this format: "This should be displayed third"
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(2, R.id.orderNote_note))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(5, R.id.orderNote_note))
                 .check(matches(withText(mockOrderNotesList[2].note)))
     }
 
@@ -128,12 +135,15 @@ class OrderDetailNotesCardTest : TestBase() {
         onView(withId(R.id.ordersList))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        // verify that the first note item is set to "Note from customer"
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(0, R.id.orderNote_header))
-                .check(matches(withText("Nov 5, 2018 (System)")))
+        // scroll to the order notes section
+        onView(withId(R.id.orderDetail_noteList)).perform(WCMatchers.scrollTo())
+
+        // verify that the first note item is set to "Note to customer"
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(1, R.id.orderNote_header))
+                .check(matches(withText("10:12 AM - Author (To customer)")))
 
         // verify that the first note item icon is set to R.drawable.ic_note_public
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(0, R.id.orderNote_icon))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(1, R.id.orderNote_icon))
                 .check(matches(WCMatchers.withDrawable(R.drawable.ic_note_public)))
     }
 
@@ -149,12 +159,15 @@ class OrderDetailNotesCardTest : TestBase() {
         onView(withId(R.id.ordersList))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
+        // scroll to the order notes section
+        onView(withId(R.id.orderDetail_noteList)).perform(WCMatchers.scrollTo())
+
         // verify that the second note item is set to "System Status"
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(1, R.id.orderNote_header))
-                .check(matches(withText(appContext.getString(R.string.orderdetail_note_system))))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(3, R.id.orderNote_header))
+                .check(matches(withText("7:15 AM (System)")))
 
         // verify that the second note item icon is set to R.drawable.ic_note_system
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(1, R.id.orderNote_icon))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(3, R.id.orderNote_icon))
                 .check(matches(WCMatchers.withDrawable(R.drawable.ic_note_system)))
     }
 
@@ -171,11 +184,11 @@ class OrderDetailNotesCardTest : TestBase() {
                 .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
         // verify that the third note item is set to "Private Note"
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(2, R.id.orderNote_header))
-                .check(matches(withText(appContext.getString(R.string.orderdetail_note_private))))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(5, R.id.orderNote_header))
+                .check(matches(withText("5:15 AM - Author (Private)")))
 
         // verify that the third note item icon is set to R.drawable.ic_note_private
-        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(2, R.id.orderNote_header))
+        onView(WCMatchers.withRecyclerView(id.notesList_notes).atPositionOnView(5, R.id.orderNote_icon))
                 .check(matches(WCMatchers.withDrawable(R.drawable.ic_note_private)))
     }
 }
