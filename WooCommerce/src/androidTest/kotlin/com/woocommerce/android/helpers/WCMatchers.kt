@@ -20,6 +20,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import com.google.android.material.textfield.TextInputLayout
 import com.woocommerce.android.widgets.FlowLayout
 import com.woocommerce.android.widgets.sectionedrecyclerview.SectionedRecyclerViewAdapter
 import org.hamcrest.CoreMatchers.allOf
@@ -218,6 +219,18 @@ object WCMatchers {
 
             override fun matchesSafely(view: TextView): Boolean {
                 return view.error == error
+            }
+        }
+    }
+
+    fun matchesTextInputLayoutError(error: String): Matcher<View> {
+        return object : BoundedMatcher<View, TextInputLayout>(TextInputLayout::class.java) {
+            override fun describeTo(description: Description?) {
+                description?.appendText("has error text: ")
+            }
+
+            override fun matchesSafely(view: TextInputLayout?): Boolean {
+                return view?.error == error
             }
         }
     }

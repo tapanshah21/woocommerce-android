@@ -72,7 +72,7 @@ class AddShipmentTrackingNavigationTest : TestBase() {
         onView(withId(R.id.menu_add)).perform(click())
 
         // verify that error is displayed
-        onView(withId(R.id.addTracking_editCarrier)).check(matches(WCMatchers.matchesError(
+        onView(withId(R.id.addTracking_carrierLayout)).check(matches(WCMatchers.matchesTextInputLayoutError(
                 appContext.getString(R.string.order_shipment_tracking_empty_provider)
         )))
     }
@@ -97,7 +97,7 @@ class AddShipmentTrackingNavigationTest : TestBase() {
         onView(withId(R.id.menu_add)).perform(click())
 
         // verify that error is displayed
-        onView(withId(R.id.addTracking_number)).check(matches(WCMatchers.matchesError(
+        onView(withId(R.id.addTracking_numberLayout)).check(matches(WCMatchers.matchesTextInputLayoutError(
                 appContext.getString(R.string.order_shipment_tracking_empty_tracking_num)
         )))
     }
@@ -127,7 +127,7 @@ class AddShipmentTrackingNavigationTest : TestBase() {
         onView(withId(R.id.menu_add)).perform(click())
 
         // verify that error is displayed
-        onView(withId(R.id.addTracking_number)).check(matches(WCMatchers.matchesError(
+        onView(withId(R.id.addTracking_numberLayout)).check(matches(WCMatchers.matchesTextInputLayoutError(
                 appContext.getString(R.string.order_shipment_tracking_empty_tracking_num)
         )))
 
@@ -162,7 +162,7 @@ class AddShipmentTrackingNavigationTest : TestBase() {
         onView(withId(R.id.menu_add)).perform(click())
 
         // verify that error is displayed
-        onView(withId(R.id.addTracking_custom_provider_name)).check(matches(WCMatchers.matchesError(
+        onView(withId(R.id.addTracking_customNameLayout)).check(matches(WCMatchers.matchesTextInputLayoutError(
                 appContext.getString(R.string.order_shipment_tracking_empty_custom_provider_name)
         )))
 
