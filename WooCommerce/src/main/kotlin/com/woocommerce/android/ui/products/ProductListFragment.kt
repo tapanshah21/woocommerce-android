@@ -276,6 +276,7 @@ class ProductListFragment : TopLevelFragment(), OnProductClickListener, ProductS
             new.displaySortAndFilterCard?.takeIfNotEqualTo(old?.displaySortAndFilterCard) {
                 showProductSortAndFiltersCard(it)
             }
+            new.filterCount?.takeIfNotEqualTo(old?.filterCount) { updateFilterSelection(it) }
         }
 
         viewModel.productList.observe(viewLifecycleOwner, Observer {
@@ -339,6 +340,10 @@ class ProductListFragment : TopLevelFragment(), OnProductClickListener, ProductS
         } else {
             products_sort_filter_card.visibility = View.GONE
         }
+    }
+
+    private fun updateFilterSelection(filterCount: Int) {
+        products_sort_filter_card.updateFilterSelection(filterCount)
     }
 
     override fun onProductClick(remoteProductId: Long) {
