@@ -23,6 +23,7 @@
     <color name="color_on_primary_disabled">@color/woo_black_90_alpha_038</color>
     <color name="color_on_primary_surface">@color/woo_white_alpha_087</color>
     <color name="color_on_primary_surface_high">@color/woo_white_alpha_087</color>
+    <color name="color_on_primary_surface_disabled">@color/woo_black_90_alpha_012</color>
 
     <color name="color_on_secondary">@color/woo_black</color>
     <color name="color_on_background">@color/woo_white</color>
@@ -72,7 +73,6 @@
     <color name="product_stock_fg">@color/color_on_surface_medium</color>
     <color name="product_status_fg_other">@color/woo_blue_30</color>
     <color name="product_status_fg_pending">@color/woo_orange_30</color>
-    <color name="product_filer_bg_selected">@color/color_secondary</color>
 
     <!--
         Aztec Editor

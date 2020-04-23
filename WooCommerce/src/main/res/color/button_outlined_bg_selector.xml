@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:state_selected="true"
-        android:color="@color/product_filer_bg_selected"/>
+        android:state_checkable="true"
+        android:state_checked="true"
+        android:color="@color/color_primary_surface"/>
     <item
-        android:state_selected="false"
         android:color="@color/transparent"/>
 </selector>
