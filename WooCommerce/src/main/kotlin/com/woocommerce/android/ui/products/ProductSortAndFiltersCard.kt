@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.products
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.woocommerce.android.R
 import kotlinx.android.synthetic.main.products_sort_and_filters_card.view.*
@@ -22,7 +23,11 @@ class ProductSortAndFiltersCard @JvmOverloads constructor(
     }
 
     fun initView(listener: ProductSortAndFilterListener) {
-        btn_product_filter.setOnClickListener { listener.onFilterOptionSelected() }
+        btn_product_filter.setOnClickListener {
+//            listener.onFilterOptionSelected()
+            val checked = (it as MaterialButton).isChecked
+            println("AMANDA-TEST > ProductSortAndFiltersCard.initView > $checked")
+        }
         btn_product_sorting.setOnClickListener { listener.onSortOptionSelected() }
     }
 
