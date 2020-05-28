@@ -3,6 +3,7 @@ package com.woocommerce.android
 import android.content.Context
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
@@ -335,4 +336,14 @@ open class WooCommerce : MultiDexApplication(), HasAndroidInjector, ApplicationL
     }
 
     override fun androidInjector(): AndroidInjector<Any> = androidInjector
+
+    fun generateTestNotification(context: Context, type: String, noteId: String) {
+        val data = Bundle().apply {
+            putString(NotificationHandler.PUSH_ARG_NOTE_ID, noteId)
+            putString(NotificationHandler.PUSH_ARG_USER, accountStore.account.userId.toString())
+            putString(NotificationHandler.PUSH_ARG_TYPE, type)
+            putString(NotificationHandler.PUSH_ARG_MSG, "Test notification $noteId")
+        }
+        notificationHandler.buildAndShowNotificationFromNoteData(context, data, accountStore.account)
+    }
 }

@@ -46,6 +46,7 @@ import java.net.URLDecoder
 import java.util.concurrent.ExecutionException
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Singleton
 class NotificationHandler @Inject constructor(
@@ -295,8 +296,9 @@ class NotificationHandler @Inject constructor(
 
         val message = StringEscapeUtils.unescapeHtml4(data.getString(PUSH_ARG_MSG))
 
-        val localPushId = getLocalPushIdForWpComNoteId(wpComNoteId)
-        ACTIVE_NOTIFICATIONS_MAP[localPushId] = data
+        val randomNumber = Random.nextInt()
+        val localPushId = getLocalPushIdForWpComNoteId(wpComNoteId, randomNumber)
+        ACTIVE_NOTIFICATIONS_MAP[localPushId + randomNumber] = data
 
         if (NotificationsUtils.isNotificationsEnabled(context)) {
             bumpPushNotificationsAnalytics(context, Stat.PUSH_NOTIFICATION_RECEIVED, data)
@@ -326,10 +328,10 @@ class NotificationHandler @Inject constructor(
      * For a given remote note ID, return a unique local ID to track that notification with, or return
      * the existing local ID if a notification matching the remote note ID is already being displayed.
      */
-    private fun getLocalPushIdForWpComNoteId(wpComNoteId: String): Int {
+    private fun getLocalPushIdForWpComNoteId(wpComNoteId: String, randomNumber: Int): Int {
         // Update notification content for the same noteId if it is already showing
         for (id in ACTIVE_NOTIFICATIONS_MAP.keys) {
-            val noteBundle = ACTIVE_NOTIFICATIONS_MAP[id]
+            val noteBundle = ACTIVE_NOTIFICATIONS_MAP[id + randomNumber]
             if (noteBundle?.getString(PUSH_ARG_NOTE_ID, "") == wpComNoteId) {
                 return id
             }

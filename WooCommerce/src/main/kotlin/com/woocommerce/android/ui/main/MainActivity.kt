@@ -22,6 +22,7 @@ import com.woocommerce.android.BuildConfig
 import com.woocommerce.android.NavGraphMainDirections
 import com.woocommerce.android.R
 import com.woocommerce.android.RequestCodes
+import com.woocommerce.android.WooCommerce
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTracker.Stat
 import com.woocommerce.android.extensions.WooNotificationType.NEW_ORDER
@@ -187,6 +188,8 @@ class MainActivity : AppUpgradeActivity(),
         if (!BuildConfig.DEBUG) {
             checkForAppUpdates()
         }
+
+        (application as? WooCommerce)?.generateTestNotification(this, NotificationHandler.PUSH_TYPE_NEW_ORDER, "4028765579")
     }
 
     override fun hideProgressDialog() {
